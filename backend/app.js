@@ -12,7 +12,7 @@ const mysql = require("mysql2");
 const helmet = require("helmet");
 
 // Import de express-sanatize pour nettoyer les données des utilisateurs (empêche l'injection)
-const es = require("express-sanitize");
+
 
 // Import de path pour le chemin des images
 const path = require ("path");
@@ -27,7 +27,14 @@ let corsOptions = {
 };
 
 // Connexion de l'API à la base de données MySQL
+const sequelize = require("./config/sequelize");
 
+try {
+    sequelize.authenticate();
+    console.log("Connection à MySQL réussie !");
+} catch (error) {
+    console.log("Connection à MySQL non réussie, " + error);
+};
 
 // Création de l'application
 const application = express();
@@ -51,7 +58,7 @@ application.use (helmet.crossOriginResourcePolicy ({ policy : "cross-origin" }))
 
 // Par défaut, les caractères $ et . sont complètement supprimés des entrées fournies par l'utilisateur aux endroits suivants : req.body, req.params, req.headers, req.query
 // Pour supprimer les données en utilisant ces valeurs par défaut
-application.use(es());
+
 
 // Utilisation des images dans le dossier statique
 application.use("/images", express.static(path.join(__dirname, "images")));
