@@ -1,0 +1,22 @@
+// Import de sequelize
+const { Sequelize } = require("sequelize");
+
+// Import de la configuration de sequelize
+const db = require("../config/sequelize");
+
+// Création du modèle défini
+const userModel = db.define("user", {
+    nom: { type: Sequelize.STRING, allowNull: false },
+    prenom: { type: Sequelize.STRING, allowNull: false },
+    email: { type: Sequelize.STRING, allowNull: false, unique: true },
+    motdepasse: { type: Sequelize.STRING, allowNull: false },
+    fonction: { type: Sequelize.STRING, allowNull: false },
+    photo: { type: Sequelize.STRING, allowNull: true, defaultValue: "http://localhost:3000/images/default-profile.jpg" },
+    biographie: { type: Sequelize.STRING, allowNull: true },
+    administrateur: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: "false"}
+}, {
+    timestamps: false
+});
+
+// Export du modèle
+module.exports = userModel;

@@ -1,3 +1,7 @@
+// Import des variables d'environnement stockées dans le fichier .env
+const dotenv = require("dotenv");
+dotenv.config();
+
 // Appel du protocole HTTP qui permet de répondre aux requêtes de ce type
 const http = require ("http");
 

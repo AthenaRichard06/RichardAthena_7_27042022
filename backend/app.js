@@ -1,7 +1,3 @@
-// Import des variables d'environnement stockées dans le fichier .env
-const dotenv = require("dotenv");
-dotenv.config();
-
 // Import d'Express pour créer des applications avec Node.js
 const express = require ("express");
 
@@ -18,7 +14,7 @@ const helmet = require("helmet");
 const path = require ("path");
 
 // Import des router
-
+const utilisateurRoutes = require ("./routes/utilisateur");
 
 // Import de cors pour sécuriser l'accès à l'API, réservé ici à localhost:4200
 const cors = require ("cors");
@@ -33,7 +29,7 @@ try {
     sequelize.authenticate();
     console.log("Connection à MySQL réussie !");
 } catch (error) {
-    console.log("Connection à MySQL non réussie, " + error);
+    console.error("Connection à MySQL non réussie, " + error);
 };
 
 // Création de l'application
@@ -64,7 +60,7 @@ application.use (helmet.crossOriginResourcePolicy ({ policy : "cross-origin" }))
 application.use("/images", express.static(path.join(__dirname, "images")));
 
 // Utilisation des router
-
+application.use ("/api/auth", utilisateurRoutes);
 
 // Export de l'application
 module.exports = application;
