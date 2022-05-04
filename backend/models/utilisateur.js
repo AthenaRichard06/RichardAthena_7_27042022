@@ -18,5 +18,12 @@ const userModel = db.define("user", {
     timestamps: false
 });
 
+// Import des modèles
+const postModel = require("../models/publication");
+
+// Relations entre les modèles
+userModel.hasMany(postModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
+postModel.belongsTo(userModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
+
 // Export du modèle
 module.exports = userModel;

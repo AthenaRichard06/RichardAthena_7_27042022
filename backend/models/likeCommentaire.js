@@ -9,6 +9,8 @@ const likeCommModel = db.define("likecomment", {
     user_like_comment_id: { type: Sequelize.INTEGER, allowNull: false },
     post_like_comment_id: { type: Sequelize.INTEGER, allowNull: false },
     comment_like_comment_id: { type: Sequelize.INTEGER, allowNull: false }
+}, {
+    timestamps: false
 });
 
 // Export du modèle

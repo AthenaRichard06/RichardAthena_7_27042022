@@ -9,6 +9,8 @@ const dislikeCommModel = db.define("dislikecomment", {
     user_dislike_comment_id: { type: Sequelize.INTEGER, allowNull: false },
     post_dislike_comment_id: { type: Sequelize.INTEGER, allowNull: false },
     comment_dislike_comment_id: { type: Sequelize.INTEGER, allowNull: false }
+}, {
+    timestamps: false
 });
 
 // Export du modèle

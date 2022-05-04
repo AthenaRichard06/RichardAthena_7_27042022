@@ -8,6 +8,8 @@ const db = require("../config/sequelize");
 const dislikePubliModel = db.define("dislikepost", {
     user_dislike_post_id: { type: Sequelize.INTEGER, allowNull: false },
     post_dislike_post_id: { type: Sequelize.INTEGER, allowNull: false }
+}, {
+    timestamps: false
 });
 
 // Export du modèle

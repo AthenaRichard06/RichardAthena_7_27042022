@@ -7,9 +7,12 @@ const db = require("../config/sequelize");
 // Création du modèle défini
 const postModel = db.define("post", {
     texte: { type: Sequelize.STRING, allowNull: false },
-    image: { type: Sequelize.STRING, allowNull: true },
-    date: { type: Sequelize.DATETIME, allowNull: false },
+    photo: { type: Sequelize.STRING, allowNull: true },
     user_post_id: { type: Sequelize.INTEGER, allowNull: false }
+}, {
+    timestamps: true,
+    updatedAt: false,
+    createdAt: true
 });
 
 // Export du modèle

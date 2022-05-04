@@ -8,6 +8,8 @@ const db = require("../config/sequelize");
 const likePubliModel = db.define("likepost", {
     user_like_post_id: { type: Sequelize.INTEGER, allowNull: false },
     post_like_post_id: { type: Sequelize.INTEGER, allowNull: false }
+}, {
+    timestamps: false
 });
 
 // Export du modèle

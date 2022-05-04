@@ -14,7 +14,9 @@ const helmet = require("helmet");
 const path = require ("path");
 
 // Import des router
-const utilisateurRoutes = require ("./routes/utilisateur");
+const authentificationRoutes = require("./routes/authentification");
+const utilisateurRoutes = require("./routes/utilisateur");
+const publicationRoutes = require("./routes/publication");
 
 // Import de cors pour sécuriser l'accès à l'API, réservé ici à localhost:4200
 const cors = require ("cors");
@@ -23,10 +25,10 @@ let corsOptions = {
 };
 
 // Connexion de l'API à la base de données MySQL
-const sequelize = require("./config/sequelize");
+const db = require("./config/sequelize");
 
 try {
-    sequelize.authenticate();
+    db.authenticate();
     console.log("Connection à MySQL réussie !");
 } catch (error) {
     console.error("Connection à MySQL non réussie, " + error);
@@ -60,7 +62,9 @@ application.use (helmet.crossOriginResourcePolicy ({ policy : "cross-origin" }))
 application.use("/images", express.static(path.join(__dirname, "images")));
 
 // Utilisation des router
-application.use ("/api/auth", utilisateurRoutes);
+application.use ("/api/auth", authentificationRoutes);
+application.use ("/api/profiles", utilisateurRoutes);
+application.use ("/api/posts", publicationRoutes);
 
 // Export de l'application
 module.exports = application;

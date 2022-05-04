@@ -1,8 +1,9 @@
 // Import de bcrypt pour hacher les mots de passe
 const bcrypt = require ("bcrypt");
 
-// Import du modèle utilisateurSchema
+// Import du modèle utilisateurModel
 const User = require ("../models/utilisateur");
+const Post = require ("../models/publication");
 
 // Import de jsonwebtoken pour créer et vérifier les token
 const jsonwebtoken = require ("jsonwebtoken");
@@ -126,3 +127,24 @@ exports.suppressionCompte = (requete, reponse, next) => {
         })
         .catch(erreur => reponse.status(500).json({ erreur }));
 };
+
+// // Afficher toutes les publications d'un utilisateur
+// exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
+//     User.findOne({
+//         where: { id: requete.params.id }
+//     })
+//     .then(user => 
+//         Post.findAll({
+//             include: {
+//                 model: User,
+//                 attributes: {
+//                     exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
+//                 }
+//             },
+//             order: [["createdAt", "DESC"]]
+//         })
+//             .then(post => reponse.status(200).json(post))
+//             .catch(erreur => reponse.status(404).json({ erreur })),
+//     reponse.status(200).json(user))
+//     .catch(erreur => reponse.status(404).json({ erreur }));  
+// }
