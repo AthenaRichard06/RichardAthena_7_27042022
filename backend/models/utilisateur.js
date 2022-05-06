@@ -20,10 +20,14 @@ const userModel = db.define("user", {
 
 // Import des modèles
 const postModel = require("../models/publication");
+const commentModel = require("../models/commentaire");
 
 // Relations entre les modèles
 userModel.hasMany(postModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
 postModel.belongsTo(userModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
+
+userModel.hasMany(commentModel,{ foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+commentModel.belongsTo(userModel, { foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
 
 // Export du modèle
 module.exports = userModel;

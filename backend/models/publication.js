@@ -15,5 +15,12 @@ const postModel = db.define("post", {
     createdAt: true
 });
 
+// Import des modèles
+const commentModel = require("../models/commentaire");
+
+// Relations entre les modèles
+postModel.hasMany(commentModel,{ foreignKey: "post_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+commentModel.belongsTo(postModel, { foreignKey: "post_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+
 // Export du modèle
 module.exports = postModel;

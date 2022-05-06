@@ -17,6 +17,7 @@ const path = require ("path");
 const authentificationRoutes = require("./routes/authentification");
 const utilisateurRoutes = require("./routes/utilisateur");
 const publicationRoutes = require("./routes/publication");
+const commentaireRoutes = require("./routes/commentaire");
 
 // Import de cors pour sécuriser l'accès à l'API, réservé ici à localhost:4200
 const cors = require ("cors");
@@ -65,6 +66,7 @@ application.use("/images", express.static(path.join(__dirname, "images")));
 application.use ("/api/auth", authentificationRoutes);
 application.use ("/api/profiles", utilisateurRoutes);
 application.use ("/api/posts", publicationRoutes);
+application.use ("/api/comments", commentaireRoutes);
 
 // Export de l'application
 module.exports = application;

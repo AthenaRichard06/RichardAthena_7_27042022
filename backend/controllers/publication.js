@@ -1,4 +1,4 @@
-// Import du modèle postModel
+// Import des modèles
 const Post = require ("../models/publication");
 const User = require ("../models/utilisateur");
 
@@ -53,7 +53,7 @@ exports.affichageToutesPublications = (requete, reponse, next) => {
         .catch(erreur => reponse.status(404).json({ erreur }));
 }
 
-// Afficher toutes les publications d'un utilisateur
+// Afficher toutes les publications d'un utilisateur·rice
 exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
     Post.findAll({
         where: { user_post_id: requete.params.id },
@@ -69,6 +69,7 @@ exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
         .catch(erreur => reponse.status(404).json({ erreur }));  
 };
 
+// Modification d'une publication
 exports.modificationPublication = (requete, reponse, next) => {
     // On demande si un fichier accompagne la requête/modification
     const postObjet = requete.file ?
@@ -86,7 +87,7 @@ exports.modificationPublication = (requete, reponse, next) => {
             const nomFichier = post.photo.split("/images/")[1];
             fileSystem.unlink(`images/${nomFichier}`, (erreur) => { erreur })
         }
-        // On vérifie que l'Id de l'utilisateur est le même que l'Id de celui qui a crée le compte, sauf si c'est un administrateur
+        // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
         if (post.user_post_id !== requete.auth.userId && requete.params.administrateur == false) {
             return reponse.status(401).json({ erreur })
         }
@@ -98,4 +99,23 @@ exports.modificationPublication = (requete, reponse, next) => {
             .then(() => reponse.status(200).json({ message : "Publication modifiée !"}))
             .catch(erreur => reponse.status(400).json({ erreur }));
     })
+};
+
+// Suppression d'une publication
+exports.suppressionPublication = (requete, reponse, next) => {
+    Post.findOne({ where: { id: requete.params.id }})
+        .then((post) => {
+            // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée la publication, sauf si c'est un·e administrateur·rice
+            if (post.user_post_id !== requete.auth.userId && requete.auth.user.administrateur == false) {
+                return reponse.status(401).json({ erreur })
+            }
+            const nomFichier = post.photo.split("/images/")[1];
+            // On supprime l'image dans le dossier, puis on supprime la publication de la base de données
+            fileSystem.unlink(`images/${nomFichier}`, () => {
+                Post.destroy({ where: { id: requete.params.id }})
+                    .then(() => reponse.status(200).json({ message : "Publication supprimée !"}))
+                    .catch(erreur => reponse.status(400).json({ erreur }));
+            })
+        })
+        .catch(erreur => reponse.status(500).json({ erreur }));
 };
