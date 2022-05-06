@@ -17,7 +17,6 @@ const multer = require ("../middleware/multer-config");
 router.get('/:id', utilisateurControle.affichageCompte);
 router.put('/:id', authentification, multer, utilisateurControle.modificationCompte);
 router.delete('/:id', authentification, utilisateurControle.suppressionCompte);
-// router.get('/:id', authentification, utilisateurControle.affichagePublicationsUtilisateur);
 
 // Export du router
 module.exports = router;

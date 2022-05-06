@@ -17,6 +17,7 @@ const multer = require ("../middleware/multer-config");
 router.post('/', authentification, multer, publicationControle.creationPublication);
 router.get('/:id', publicationControle.affichagePublication);
 router.get('/', authentification, publicationControle.affichageToutesPublications);
+router.get('/user/:id', authentification, publicationControle.affichagePublicationsUtilisateur);
 router.put('/:id', authentification, multer, publicationControle.modificationPublication);
 
 // Export du router

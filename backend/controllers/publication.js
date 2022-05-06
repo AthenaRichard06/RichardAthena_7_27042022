@@ -38,27 +38,6 @@ exports.affichagePublication = (requete, reponse, next) => {
         .catch(erreur => reponse.status(404).json({ erreur }));
 };
 
-// // Afficher toutes les publications d'un utilisateur
-// exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
-//     User.findOne({
-//         where: { id: requete.params.id }
-//     })
-//     .then(user => 
-//         Post.findAll({
-//             include: {
-//                 model: User,
-//                 attributes: {
-//                     exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
-//                 }
-//             },
-//             order: [["createdAt", "DESC"]]
-//         })
-//             .then(post => reponse.status(200).json(post))
-//             .catch(erreur => reponse.status(404).json({ erreur })),
-//     reponse.status(200).json(user))
-//     .catch(erreur => reponse.status(404).json({ erreur }));  
-// }
-
 // Afficher toutes les publications
 exports.affichageToutesPublications = (requete, reponse, next) => {
     Post.findAll({
@@ -73,6 +52,22 @@ exports.affichageToutesPublications = (requete, reponse, next) => {
         .then(post => reponse.status(200).json(post))
         .catch(erreur => reponse.status(404).json({ erreur }));
 }
+
+// Afficher toutes les publications d'un utilisateur
+exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
+    Post.findAll({
+        where: { user_post_id: requete.params.id },
+        include: {
+            model: User,
+            attributes: {
+                exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
+            }
+        },
+        order: [["createdAt", "DESC"]]
+    })
+        .then(post => reponse.status(200).json(post))
+        .catch(erreur => reponse.status(404).json({ erreur }));  
+};
 
 exports.modificationPublication = (requete, reponse, next) => {
     // On demande si un fichier accompagne la requête/modification

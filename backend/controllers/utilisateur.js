@@ -3,7 +3,6 @@ const bcrypt = require ("bcrypt");
 
 // Import du modèle utilisateurModel
 const User = require ("../models/utilisateur");
-const Post = require ("../models/publication");
 
 // Import de jsonwebtoken pour créer et vérifier les token
 const jsonwebtoken = require ("jsonwebtoken");
@@ -23,7 +22,27 @@ exports.creationCompte = (requete, reponse, next) => {
                 biographie: requete.body.biographie,
                 administrateur: requete.body.administrateur
             })
-                .then(() => reponse.status(201).json({ message : "Utilisateur créé !"}))
+                .then(() => reponse.status(201).json({ message : "Utilisateur·rice créé·e !"}))
+                .catch(erreur => reponse.status(400).json({ erreur }));
+        })
+        .catch(erreur => reponse.status(500).json({ erreur }));
+};
+
+// Créer un compte administrateur·rice
+exports.creationCompteAdmin = (requete, reponse, next) => {
+    // On hache le mot de passe et on le sale dix fois
+    bcrypt.hash(requete.body.motdepasse, 10)
+        .then(hash => {
+            User.create({
+                nom: requete.body.nom,
+                prenom: requete.body.prenom,
+                email: requete.body.email,
+                motdepasse: hash,
+                fonction: requete.body.fonction,
+                biographie: requete.body.biographie,
+                administrateur: true
+            })
+                .then(() => reponse.status(201).json({ message : "Administrateur·rice créé·e !"}))
                 .catch(erreur => reponse.status(400).json({ erreur }));
         })
         .catch(erreur => reponse.status(500).json({ erreur }));
@@ -46,7 +65,7 @@ exports.connexionCompte = (requete, reponse, next) => {
                     }
                     reponse.status(200).json({
                         userId: user.id,
-                        // On ajoute ici le token qui contient l'Id de l'utilisateur 
+                        // On ajoute ici le token qui contient l'Id de l'utilisateur·rice
                         token: jsonwebtoken.sign(
                             { userId: user.id },
                             process.env.Token,
@@ -59,14 +78,14 @@ exports.connexionCompte = (requete, reponse, next) => {
         .catch(erreur => reponse.status(500).json({ erreur }));
 };
 
-// Afficher le profil d'un utilisateur
+// Afficher le profil d'un·e utilisateur·rice
 exports.affichageCompte = (requete, reponse, next) => {
     User.findOne({ where: { id: requete.params.id }})
         .then(user => reponse.status(200).json(user))
         .catch(erreur => reponse.status(404).json({ erreur }));
 };
 
-// Modifier le profil d'un utilisateur
+// Modifier le profil d'un·e utilisateur·rice
 exports.modificationCompte = (requete, reponse, next) => {
     // On demande si un fichier accompagne la requête/modification
     const userObjet = requete.file ?
@@ -84,7 +103,7 @@ exports.modificationCompte = (requete, reponse, next) => {
             const nomFichier = user.photo.split("/images/")[1];
             fileSystem.unlink(`images/${nomFichier}`, (erreur) => { erreur })
         }
-        // On vérifie que l'Id de l'utilisateur est le même que l'Id de celui qui a crée le compte, sauf si c'est un administrateur
+        // On vérifie que l'Id de l'utilisateur est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
         if (user.id !== requete.auth.userId && requete.params.administrateur == false) {
             return reponse.status(401).json({ erreur })
         }
@@ -103,11 +122,11 @@ exports.modificationCompte = (requete, reponse, next) => {
 exports.suppressionCompte = (requete, reponse, next) => {
     User.findOne({ where: { id: requete.params.id }})
         .then((user) => {
-            // On vérifie si on trouve l'utilisateur, sinon erreur
+            // On vérifie si on trouve l'utilisateur·rice, sinon erreur
             if (!user) {
                 return reponse.status(404).json({ erreur })
             }
-            // On vérifie que l'Id de l'utilisateur est le même que l'Id de celui qui a crée le compte, sauf si c'est un administrateur
+            // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
             if (user.id !== requete.auth.userId && requete.auth.user.administrateur == false) {
                 return reponse.status(401).json({ erreur })
             }
@@ -127,24 +146,3 @@ exports.suppressionCompte = (requete, reponse, next) => {
         })
         .catch(erreur => reponse.status(500).json({ erreur }));
 };
-
-// // Afficher toutes les publications d'un utilisateur
-// exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
-//     User.findOne({
-//         where: { id: requete.params.id }
-//     })
-//     .then(user => 
-//         Post.findAll({
-//             include: {
-//                 model: User,
-//                 attributes: {
-//                     exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
-//                 }
-//             },
-//             order: [["createdAt", "DESC"]]
-//         })
-//             .then(post => reponse.status(200).json(post))
-//             .catch(erreur => reponse.status(404).json({ erreur })),
-//     reponse.status(200).json(user))
-//     .catch(erreur => reponse.status(404).json({ erreur }));  
-// }

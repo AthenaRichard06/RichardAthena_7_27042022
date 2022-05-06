@@ -21,6 +21,7 @@ const multer = require ("../middleware/multer-config");
 
 // Utilisation de l'application via l'implémenter du CRUD (creation, read, update, delete)
 router.post('/signup', emailControle, motdepasseControle, multer, utilisateurControle.creationCompte);
+router.post('/signup/admin', emailControle, motdepasseControle, multer, utilisateurControle.creationCompteAdmin);
 router.post('/login', connexionControle, utilisateurControle.connexionCompte);
 
 // Export du router
