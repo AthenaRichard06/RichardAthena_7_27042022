@@ -1,6 +1,8 @@
 // Import des modèles
 const LikePost = require ("../models/likePublication");
+const DislikePost = require ("../models/dislikePublication");
 const LikeComment = require ("../models/likeCommentaire");
+const DislikeComment = require ("../models/dislikeCommentaire");
 
 // Logiques métiers des différentes demandes CRUD
 // Like d'une publication
@@ -17,7 +19,7 @@ exports.likePublication = (requete, reponse, next) => {
                 { user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id }
             })
-            .then(() => reponse.status(200).json({message : "Like supprimé !"}))
+            .then(() => reponse.status(200).json({ message : "Like supprimé !"}))
             .catch(erreur => reponse.status(500).json({ erreur }));
         // Sinon, si le like n'existe pas, on le créé
         } else {
@@ -25,7 +27,36 @@ exports.likePublication = (requete, reponse, next) => {
                 user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id
             })
-            .then(() => reponse.status(201).json({message : "Like créé !"}))
+            .then(() => reponse.status(201).json({ message : "Like créé !"}))
+            .catch(erreur => reponse.status(500).json({ erreur }));
+        }
+    })
+    .catch(erreur => reponse.status(500).json({ erreur }));
+};
+
+// Dislike d'une publication
+exports.dislikePublication = (requete, reponse, next) => {
+    // On recherche un like selon la publication et l'utilisateur·rice
+    DislikePost.findOne({ where:
+        { user_dislike_post_id: requete.auth.userId,
+        post_dislike_post_id: requete.params.id }
+    })
+    .then((dislikepost) => {
+        // Si un like existe déjà, on le supprime
+        if(dislikepost) {
+            DislikePost.destroy({ where: 
+                { user_dislike_post_id: requete.auth.userId,
+                post_dislike_post_id: requete.params.id }
+            })
+            .then(() => reponse.status(200).json({ message : "Dislike supprimé !"}))
+            .catch(erreur => reponse.status(500).json({ erreur }));
+        // Sinon, si le like n'existe pas, on le créé
+        } else {
+            DislikePost.create({
+                user_dislike_post_id: requete.auth.userId,
+                post_dislike_post_id: requete.params.id
+            })
+            .then(() => reponse.status(201).json({ message : "Dislike créé !"}))
             .catch(erreur => reponse.status(500).json({ erreur }));
         }
     })
@@ -48,7 +79,7 @@ exports.likeCommentaire = (requete, reponse, next) => {
                 post_like_comment_id: requete.params.id,
                 comment_like_comment_id: requete.params.commentId }
             })
-            .then(() => reponse.status(200).json({message : "Like supprimé !"}))
+            .then(() => reponse.status(200).json({ message : "Like supprimé !"}))
             .catch(erreur => reponse.status(500).json({ erreur }));
         // Sinon, si le like n'existe pas, on le créé
         } else {
@@ -57,7 +88,39 @@ exports.likeCommentaire = (requete, reponse, next) => {
                 post_like_comment_id: requete.params.id,
                 comment_like_comment_id: requete.params.commentId
             })
-            .then(() => reponse.status(201).json({message : "Like créé !"}))
+            .then(() => reponse.status(201).json({ message : "Like créé !"}))
+            .catch(erreur => reponse.status(500).json({ erreur }));
+        }
+    })
+    .catch(erreur => reponse.status(500).json({ erreur }));
+};
+
+// Dislike d'un commentaire
+exports.dislikeCommentaire = (requete, reponse, next) => {
+    // On recherche un like selon le commentaire, la publication et l'utilisateur·rice
+    DislikeComment.findOne({ where:
+        { user_dislike_comment_id: requete.auth.userId,
+        post_dislike_comment_id: requete.params.id,
+        comment_dislike_comment_id: requete.params.commentId }
+    })
+    .then((dislikecomment) => {
+        // Si un like existe déjà, on le supprime
+        if(dislikecomment) {
+            DislikeComment.destroy({ where: 
+                { user_dislike_comment_id: requete.auth.userId,
+                post_dislike_comment_id: requete.params.id,
+                comment_dislike_comment_id: requete.params.commentId }
+            })
+            .then(() => reponse.status(200).json({ message : "Dislike supprimé !"}))
+            .catch(erreur => reponse.status(500).json({ erreur }));
+        // Sinon, si le like n'existe pas, on le créé
+        } else {
+            DislikeComment.create({
+                user_dislike_comment_id: requete.auth.userId,
+                post_dislike_comment_id: requete.params.id,
+                comment_dislike_comment_id: requete.params.commentId
+            })
+            .then(() => reponse.status(201).json({ message : "Dislike créé !"}))
             .catch(erreur => reponse.status(500).json({ erreur }));
         }
     })

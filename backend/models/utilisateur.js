@@ -22,6 +22,9 @@ const userModel = db.define("user", {
 const postModel = require("./publication");
 const commentModel = require("./commentaire");
 const likePubliModel = require("./likePublication");
+const likeCommModel = require("./likeCommentaire");
+const dislikePubliModel = require("./dislikePublication");
+const dislikeCommModel = require("./dislikeCommentaire");
 
 // Relations entre les modèles
 userModel.hasMany(postModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
@@ -30,9 +33,17 @@ postModel.belongsTo(userModel, { foreignKey: "user_post_id", onUpdate: "cascade"
 userModel.hasMany(commentModel, { foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
 commentModel.belongsTo(userModel, { foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
 
-userModel.hasMany(likePubliModel, { foreignKey: "user_like_post_id" });
-likePubliModel.belongsTo(userModel, { foreignKey: "user_like_post_id" });
+userModel.hasMany(likePubliModel, { foreignKey: "user_like_post_id", onUpdate: "cascade", onDelete: "cascade" });
+likePubliModel.belongsTo(userModel, { foreignKey: "user_like_post_id", onUpdate: "cascade", onDelete: "cascade" });
 
+userModel.hasMany(likeCommModel, { foreignKey: "user_like_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+likeCommModel.belongsTo(userModel, { foreignKey: "user_like_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+
+userModel.hasMany(dislikePubliModel, { foreignKey: "user_dislike_post_id", onUpdate: "cascade", onDelete: "cascade" });
+dislikePubliModel.belongsTo(userModel, { foreignKey: "user_dislike_post_id", onUpdate: "cascade", onDelete: "cascade" });
+
+userModel.hasMany(dislikeCommModel, { foreignKey: "user_dislike_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+dislikeCommModel.belongsTo(userModel, { foreignKey: "user_dislike_comment_id", onUpdate: "cascade", onDelete: "cascade" });
 
 // Export du modèle
 module.exports = userModel;
