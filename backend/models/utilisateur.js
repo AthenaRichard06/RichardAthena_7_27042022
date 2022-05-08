@@ -19,15 +19,20 @@ const userModel = db.define("user", {
 });
 
 // Import des modèles
-const postModel = require("../models/publication");
-const commentModel = require("../models/commentaire");
+const postModel = require("./publication");
+const commentModel = require("./commentaire");
+const likePubliModel = require("./likePublication");
 
 // Relations entre les modèles
 userModel.hasMany(postModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
-postModel.belongsTo(userModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
+postModel.belongsTo(userModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade"});
 
-userModel.hasMany(commentModel,{ foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+userModel.hasMany(commentModel, { foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
 commentModel.belongsTo(userModel, { foreignKey: "user_comment_id", onUpdate: "cascade", onDelete: "cascade" });
+
+userModel.hasMany(likePubliModel, { foreignKey: "user_like_post_id" });
+likePubliModel.belongsTo(userModel, { foreignKey: "user_like_post_id" });
+
 
 // Export du modèle
 module.exports = userModel;

@@ -15,9 +15,9 @@ const multer = require ("../middleware/multer-config");
 
 // Utilisation de l'application via l'implémenter du CRUD (creation, read, update, delete)
 router.post('/', authentification, multer, publicationControle.creationPublication);
-router.get('/:id', publicationControle.affichagePublication);
-router.get('/', publicationControle.affichageToutesPublications);
-router.get('/user/:id', publicationControle.affichagePublicationsUtilisateur);
+router.get('/:id', authentification, publicationControle.affichagePublication);
+router.get('/', authentification, publicationControle.affichageToutesPublications);
+router.get('/user/:id', authentification, publicationControle.affichagePublicationsUtilisateur);
 router.put('/:id', authentification, multer, publicationControle.modificationPublication);
 router.delete('/:id', authentification, publicationControle.suppressionPublication);
 

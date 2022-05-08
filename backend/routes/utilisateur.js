@@ -14,7 +14,8 @@ const authentification = require ("../middleware/authentification");
 const multer = require ("../middleware/multer-config");
 
 // Utilisation de l'application via l'implémenter du CRUD (creation, read, update, delete)
-router.get('/:id', utilisateurControle.affichageCompte);
+router.get('/', authentification, utilisateurControle.affichageTousComptes);
+router.get('/:id', authentification, utilisateurControle.affichageCompte);
 router.put('/:id', authentification, multer, utilisateurControle.modificationCompte);
 router.delete('/:id', authentification, utilisateurControle.suppressionCompte);
 

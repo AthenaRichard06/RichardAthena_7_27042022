@@ -1,6 +1,10 @@
 // Import des modèles
 const Post = require ("../models/publication");
 const User = require ("../models/utilisateur");
+const LikePost = require ("../models/likePublication");
+
+// Import de sequelize
+const { Op } = require("sequelize");
 
 // Import de file system de Node
 const fileSystem = require ("fs");
@@ -29,9 +33,7 @@ exports.affichagePublication = (requete, reponse, next) => {
         where: { id: requete.params.id },
         include: {
             model: User,
-            attributes: {
-                exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
-            }
+            attributes: ["nom", "prenom", "photo"]
         }
     })
         .then(post => reponse.status(200).json(post))
@@ -43,9 +45,7 @@ exports.affichageToutesPublications = (requete, reponse, next) => {
     Post.findAll({
         include: {
             model: User,
-            attributes: {
-                exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
-            }
+            attributes: ["nom", "prenom", "photo"]
         },
         order: [["createdAt", "DESC"]]
     })
@@ -59,9 +59,7 @@ exports.affichagePublicationsUtilisateur = (requete, reponse, next) => {
         where: { user_post_id: requete.params.id },
         include: {
             model: User,
-            attributes: {
-                exclude: ["id", "motdepasse", "email", "createdAt", "administrateur", "biographie", "fonction"],
-            }
+            attributes: ["nom", "prenom", "photo"]
         },
         order: [["createdAt", "DESC"]]
     })
@@ -87,10 +85,14 @@ exports.modificationPublication = (requete, reponse, next) => {
             const nomFichier = post.photo.split("/images/")[1];
             fileSystem.unlink(`images/${nomFichier}`, (erreur) => { erreur })
         }
-        // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
-        if (post.user_post_id !== requete.auth.userId && requete.params.administrateur == false) {
-            return reponse.status(401).json({ erreur })
-        }
+        // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée la publication, sauf si c'est un·e administrateur·rice
+        User.findOne({ where: { id: requete.auth.userId }})
+        .then((user) => {
+            if(post.user_post_id !== requete.auth.userId && !user.administrateur) {
+                return reponse.status(401).json({ message : "Vous n'avez pas les droits pour modifier cette publication !" })
+            }
+        })
+        .catch(erreur => reponse.status(500).json({ erreur }));
         // On enregistre le compte
         Post.update(
             { ...postObjet, id: requete.params.id },
@@ -106,9 +108,13 @@ exports.suppressionPublication = (requete, reponse, next) => {
     Post.findOne({ where: { id: requete.params.id }})
         .then((post) => {
             // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée la publication, sauf si c'est un·e administrateur·rice
-            if (post.user_post_id !== requete.auth.userId && requete.auth.user.administrateur == false) {
-                return reponse.status(401).json({ erreur })
-            }
+            User.findOne({ where: { id: requete.auth.userId }})
+                .then((user) => {
+                    if(post.user_post_id !== requete.auth.userId && !user.administrateur) {
+                        return reponse.status(401).json({ message : "Vous n'avez pas les droits pour supprimer cette publication !" })
+                    }
+                })
+                .catch(erreur => reponse.status(500).json({ erreur }));
             const nomFichier = post.photo.split("/images/")[1];
             // On supprime l'image dans le dossier, puis on supprime la publication de la base de données
             fileSystem.unlink(`images/${nomFichier}`, () => {

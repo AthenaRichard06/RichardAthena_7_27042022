@@ -78,9 +78,24 @@ exports.connexionCompte = (requete, reponse, next) => {
         .catch(erreur => reponse.status(500).json({ erreur }));
 };
 
+// Afficher tous les profils
+exports.affichageTousComptes = (requete, reponse, next) => {
+    User.findAll({
+        attributes: ["nom", "prenom", "photo"],
+        order: [["nom", "ASC"], ["prenom", "ASC"]]
+    })
+        .then(post => reponse.status(200).json(post))
+        .catch(erreur => reponse.status(404).json({ erreur }));
+};
+
 // Afficher le profil d'un·e utilisateur·rice
 exports.affichageCompte = (requete, reponse, next) => {
-    User.findOne({ where: { id: requete.params.id }})
+    User.findOne({
+        where: { id: requete.params.id },
+        attributes: {
+            exclude: ["id", "motdepasse", "createdAt", "administrateur"]
+        } 
+    })
         .then(user => reponse.status(200).json(user))
         .catch(erreur => reponse.status(404).json({ erreur }));
 };
@@ -103,10 +118,14 @@ exports.modificationCompte = (requete, reponse, next) => {
             const nomFichier = user.photo.split("/images/")[1];
             fileSystem.unlink(`images/${nomFichier}`, (erreur) => { erreur })
         }
-        // On vérifie que l'Id de l'utilisateur est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
-        if (user.id !== requete.auth.userId && requete.params.administrateur == false) {
-            return reponse.status(401).json({ erreur })
-        }
+        // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
+        User.findOne({ where: { id: requete.auth.userId }})
+        .then((user) => {
+            if(user.id !== requete.auth.userId && !user.administrateur) {
+                return reponse.status(401).json({ message : "Vous n'avez pas les droits pour modifier ce compte !" })
+            }
+        })
+        .catch(erreur => reponse.status(500).json({ erreur }));
         // On enregistre le compte
         User.update(
             { ...userObjet, id: requete.params.id },
@@ -122,14 +141,14 @@ exports.modificationCompte = (requete, reponse, next) => {
 exports.suppressionCompte = (requete, reponse, next) => {
     User.findOne({ where: { id: requete.params.id }})
         .then((user) => {
-            // On vérifie si on trouve l'utilisateur·rice, sinon erreur
-            if (!user) {
-                return reponse.status(404).json({ erreur })
-            }
             // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le compte, sauf si c'est un·e administrateur·rice
-            if (user.id !== requete.auth.userId && requete.auth.user.administrateur == false) {
-                return reponse.status(401).json({ erreur })
-            }
+            User.findOne({ where: { id: requete.auth.userId }})
+                .then((user) => {
+                    if(user.id !== requete.auth.userId && !user.administrateur) {
+                        return reponse.status(401).json({ message : "Vous n'avez pas les droits pour supprimer ce compte !" })
+                    }
+                })
+                .catch(erreur => reponse.status(500).json({ erreur }));
             if (user.photo = "http://localhost:3000/images/default-profile.jpg") {
                 User.destroy({ where: { id: requete.params.id }})
                     .then(() => reponse.status(200).json({ message : "Compte supprimé !"}))
