@@ -24,7 +24,7 @@ const dislikeRoutes = require("./routes/dislike");
 // Import de cors pour sécuriser l'accès à l'API, réservé ici à localhost:4200
 const cors = require ("cors");
 let corsOptions = {
-    origin: 'http://localhost:4200'
+    origin: 'http://localhost:8080'
 };
 
 // Connexion de l'API à la base de données MySQL
