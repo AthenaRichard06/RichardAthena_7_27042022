@@ -30,7 +30,7 @@ export default {
         return {
             titre: "Nouvelle publication",
             status: "",
-            utilisateurId: "",
+            userId: "",
             texte: "",
             photo: "",
         }
@@ -55,7 +55,7 @@ export default {
 
             const formData = new FormData();
             formData.append("texte", this.texte);
-            formData.append("user_post_id", donneesLocalStorage.userId);
+            formData.append("userId", donneesLocalStorage.userId);
             if (this.photo != "") {
                 formData.append("photo", this.photo);
             }
