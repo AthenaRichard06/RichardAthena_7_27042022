@@ -20,9 +20,9 @@
         <p class="erreur" v-if="!validationFonction">Votre fonction doit comporter au moins deux lettres et ne pas avoir de caractères spéciaux ni de chiffres.</p>
         <p class="erreur" v-if="!validationEmail">Votre adresse mail n'est pas valide.</p>
         <p class="erreur" v-if="!validationMotDePasse">Votre mot de passe doit comporter au moins huit caratères, avec une majuscule, une miniscule, un caractère spécial et deux chiffres.</p>
-        <p class="erreur" v-if="mode == 'connecter' && erreurStatuts == 'erreur_connexion'">Adresse mail et/ou mot de passe incorrect.</p>
-        <p class="erreur" v-if="mode == 'creation' && erreurStatuts == 'erreur_creation'">Adresse mail déjà utilisée.</p>
-        <p class="erreur" v-if="erreurStatus == 'erreur_tentatives'">Vous avez tenté trop de fois de vous connecter, votre compte est temporairement bloqué.</p>
+        <p class="erreur" v-if="mode == 'connecter' && status == 'erreur_connexion'">Adresse mail et/ou mot de passe incorrect.</p>
+        <p class="erreur" v-if="mode == 'creation' && status == 'erreur_creation'">Adresse mail déjà utilisée.</p>
+        <p class="erreur" v-if="status == 'erreur_tentatives'">Vous avez tenté trop de fois de vous connecter, votre compte est temporairement bloqué.</p>
         <!-- Formulaire -->
         <form class="formulaire" v-if="mode == 'creation'">
             <input class="formulaire__input" type="text" name="nom" placeholder="Nom" aria-label="Nom" v-model.trim="nom" required />
@@ -60,7 +60,7 @@
                 fonction: "",
                 email: "",
                 motdepasse: "",
-                erreurStatus: ""
+                status: ""
             };
         },
         // Computed = permet de recalculer uniquement si les valeurs des champs changent
@@ -123,7 +123,7 @@
             if (donneesLocalStorage) {
                 this.$router.push("/accueil");
                 return;
-            }
+            };
         },
         // Methods = permet de calculer à chaque "apparition" de la page
         methods: {
@@ -154,10 +154,10 @@
                 fetch("http://localhost:3000/api/auth/signup", envoiDonnees)
                     .then((reponse) => {
                         if (reponse.status == 500 || reponse.status == 401) {
-                            // this.erreurStatus = "erreur_creation";
+                            this.status = "erreur_creation";
                             console.log(reponse.status);
                         } else if (reponse.status == 429) {
-                            // this.erreurStatus = "erreur_tentatives";
+                            this.status = "erreur_tentatives";
                             console.log(reponse.status);
                         } else {
                             this.connecter();
@@ -182,12 +182,10 @@
                 // Envoi via fetch
                 fetch("http://localhost:3000/api/auth/login", envoiDonnees)
                     .then((reponse) => {
-                        if (reponse.status == 401) {
-                            // this.erreurStatus = "erreur_connexion";
-                            console.log(reponse.status);
+                        if (reponse.status == 500 || reponse.status == 401) {
+                            this.status = "erreur_connexion";
                         } else if (reponse.status == 429) {
-                            // this.erreurStatus = "erreur_tentatives";
-                            console.log(reponse.status);
+                            this.status = "erreur_tentatives";
                         } else {
                             reponse.json().then((donnees) => {
                                 localStorage.setItem("donnees", JSON.stringify(donnees));

@@ -68,6 +68,7 @@ img {
 
 .succes {
   color: green;
+  font-size: 12px;
 }
 
 .formulaire {

@@ -7,6 +7,9 @@ const User = require ("../models/utilisateur");
 // Import de jsonwebtoken pour créer et vérifier les token
 const jsonwebtoken = require ("jsonwebtoken");
 
+// Import de file system de Node
+const fileSystem = require ("fs");
+
 // Logiques métiers des différentes demandes CRUD
 // Créer un compte
 exports.creationCompte = (requete, reponse, next) => {
@@ -19,8 +22,6 @@ exports.creationCompte = (requete, reponse, next) => {
                 email: requete.body.email,
                 motdepasse: hash,
                 fonction: requete.body.fonction,
-                biographie: requete.body.biographie,
-                administrateur: requete.body.administrateur
             })
                 .then(() => reponse.status(201).json({ message : "Utilisateur·rice créé·e !"}))
                 .catch(erreur => reponse.status(400).json({ erreur }));
@@ -39,7 +40,6 @@ exports.creationCompteAdmin = (requete, reponse, next) => {
                 email: requete.body.email,
                 motdepasse: hash,
                 fonction: requete.body.fonction,
-                biographie: requete.body.biographie,
                 administrateur: true
             })
                 .then(() => reponse.status(201).json({ message : "Administrateur·rice créé·e !"}))
@@ -65,6 +65,7 @@ exports.connexionCompte = (requete, reponse, next) => {
                     }
                     reponse.status(200).json({
                         userId: user.id,
+                        administrateur: user.administrateur,
                         // On ajoute ici le token qui contient l'Id de l'utilisateur·rice
                         token: jsonwebtoken.sign(
                             { userId: user.id },
@@ -81,7 +82,7 @@ exports.connexionCompte = (requete, reponse, next) => {
 // Afficher tous les profils
 exports.affichageTousComptes = (requete, reponse, next) => {
     User.findAll({
-        attributes: ["nom", "prenom", "photo"],
+        attributes: ["nom", "prenom", "photo", "fonction"],
         order: [["nom", "ASC"], ["prenom", "ASC"]]
     })
         .then(post => reponse.status(200).json(post))
@@ -93,7 +94,7 @@ exports.affichageCompte = (requete, reponse, next) => {
     User.findOne({
         where: { id: requete.params.id },
         attributes: {
-            exclude: ["id", "motdepasse", "createdAt", "administrateur"]
+            exclude: ["id", "createdAt", "administrateur"]
         } 
     })
         .then(user => reponse.status(200).json(user))

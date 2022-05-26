@@ -59,7 +59,7 @@ exports.modificationCommentaire = (requete, reponse, next) => {
         // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le commentaire, sauf si c'est un·e administrateur·rice
         User.findOne({ where: { id: requete.auth.userId }})
         .then((user) => {
-            if(comment.user_comment_id !== requete.auth.userId && !user.administrateur) {
+            if(comment.user_comment_id !== requete.auth.userId || !user.administrateur) {
                 return reponse.status(401).json({ message : "Vous n'avez pas les droits pour modifier ce commentaire !" })
             }
         })
@@ -81,7 +81,7 @@ exports.suppressionCommentaire = (requete, reponse, next) => {
             // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le commentaire, sauf si c'est un·e administrateur·rice
             User.findOne({ where: { id: requete.auth.userId }})
                 .then((user) => {
-                    if(comment.user_comment_id !== requete.auth.userId && !user.administrateur) {
+                    if(comment.user_comment_id !== requete.auth.userId || !user.administrateur) {
                         return reponse.status(401).json({ message : "Vous n'avez pas les droits pour supprimer ce commentaire !" })
                     }
                 })

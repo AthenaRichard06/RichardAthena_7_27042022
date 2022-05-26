@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Connexion from '../views/Connexion.vue'
 import Accueil from '../views/Accueil.vue'
+import Publication from '../views/Publication.vue'
+import ModifierPublication from '../views/ModifierPublication.vue'
 import MonProfil from '../views/MonProfil.vue'
-import Utilisateurs from '../views/Utilisateurs.vue'
 
 const routes = [
   {
@@ -16,14 +17,19 @@ const routes = [
     component: Accueil
   },
   {
+    path: '/publication',
+    name: 'publication',
+    component: Publication
+  },
+  {
+    path: '/publication/:id',
+    name: 'modifierpublication',
+    component: ModifierPublication
+  },
+  {
     path: '/profil',
     name: 'mon profil',
     component: MonProfil
-  },
-  {
-    path: '/utilisateurs',
-    name: 'utilisateurs',
-    component: Utilisateurs
   }
 ]
 

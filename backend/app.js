@@ -19,9 +19,8 @@ const utilisateurRoutes = require("./routes/utilisateur");
 const publicationRoutes = require("./routes/publication");
 const commentaireRoutes = require("./routes/commentaire");
 const likeRoutes = require("./routes/like");
-const dislikeRoutes = require("./routes/dislike");
 
-// Import de cors pour sécuriser l'accès à l'API, réservé ici à localhost:4200
+// Import de cors pour sécuriser l'accès à l'API, réservé ici à localhost:8080
 const cors = require ("cors");
 let corsOptions = {
     origin: 'http://localhost:8080'
@@ -70,7 +69,6 @@ application.use ("/api/profiles", utilisateurRoutes);
 application.use ("/api/posts", publicationRoutes);
 application.use ("/api/comments", commentaireRoutes);
 application.use ("/api/likes", likeRoutes);
-application.use ("/api/dislikes", dislikeRoutes);
 
 // Export de l'application
 module.exports = application;
