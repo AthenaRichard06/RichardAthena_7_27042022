@@ -22,7 +22,6 @@ const userModel = db.define("user", {
 const postModel = require("./publication");
 const commentModel = require("./commentaire");
 const likePubliModel = require("./likePublication");
-const likeCommModel = require("./likeCommentaire");
 
 // Relations entre les modèles
 userModel.hasMany(postModel, { foreignKey: "user_post_id", onUpdate: "cascade", onDelete: "cascade" });
@@ -33,9 +32,6 @@ commentModel.belongsTo(userModel, { foreignKey: "user_comment_id", onUpdate: "ca
 
 userModel.hasMany(likePubliModel, { foreignKey: "user_like_post_id", onUpdate: "cascade", onDelete: "cascade" });
 likePubliModel.belongsTo(userModel, { foreignKey: "user_like_post_id", onUpdate: "cascade", onDelete: "cascade" });
-
-userModel.hasMany(likeCommModel, { foreignKey: "user_like_comment_id", onUpdate: "cascade", onDelete: "cascade" });
-likeCommModel.belongsTo(userModel, { foreignKey: "user_like_comment_id", onUpdate: "cascade", onDelete: "cascade" });
 
 // Export du modèle
 module.exports = userModel;

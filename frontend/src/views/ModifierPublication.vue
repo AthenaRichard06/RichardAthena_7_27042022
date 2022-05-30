@@ -10,8 +10,10 @@
             <textarea class="formulaire__input" type="text" name="texte" placeholder="Une nouvelle info' à nous partager ?"
                 aria-label="Texte" v-model="texte" required>{{ texte }}</textarea>
         </form>
-        <img v-show="photoPubli != ''" class="post__image" :src="photoPubli"
-            alt="Image de la publication" />
+        <div class="image">
+            <img v-show="photoPubli != ''" class="post__image" :src="photoPubli"
+                alt="Image de la publication" />
+        </div>
         <input id="photo_telechargee" type="file" name="photo_telechargee" @change="siPhotoAjoutee($event)" aria-label="Choisir une image" />
         <button @click="majPublication()" class="bouton"
             :class="{ 'bouton--disabled': !validationChamps }">Publier</button>
@@ -120,7 +122,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.encadre__titre, .encadre__soustitre, input {
+.encadre__titre, img, input {
     margin-bottom: 12px;
+}
+
+.image {
+    display: flex;
+    justify-content: center;
 }
 </style>

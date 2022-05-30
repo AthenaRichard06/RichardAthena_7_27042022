@@ -10,10 +10,10 @@
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 * {
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -21,6 +21,8 @@
 
 #app {
   max-width: 100%;
+  overflow: hidden;
+  white-space: break-spaces;
 }
 
 body {
@@ -41,7 +43,7 @@ img {
   background: #2196F3;
   color: white;
   border-radius: 8px;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 15px;
   border: none;
   width: 100%;
@@ -82,7 +84,7 @@ img {
     border-radius: 8px;
     background: #f2f2f2;
     color: black;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 16px;
     flex: 1;
     min-width: 100px;
@@ -105,11 +107,11 @@ img {
     padding: 32px;
     &__titre {
         text-align: center;
-        font-weight: 800;
+        font-weight: 700;
     }
     &__soustitre {
         text-align: center;
-        font-weight: 500;
+        font-weight: 400;
         color: #666;
     }
     &__action {

@@ -1,6 +1,6 @@
 // Import des modèles
 const LikePost = require ("../models/likePublication");
-const LikeComment = require ("../models/likeCommentaire");
+const Publication = require ("../models/publication");
 
 // Logiques métiers des différentes demandes CRUD
 // Like d'une publication
@@ -16,49 +16,40 @@ exports.likePublication = (requete, reponse, next) => {
             LikePost.destroy({ where: 
                 { user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id }
-            })
-            .then(() => reponse.status(200).json({ message : "Like supprimé !"}))
-            .catch(erreur => reponse.status(500).json({ erreur }));
+            });
+            Publication.decrement(
+                { likes: 1 },
+                { where: { id: requete.params.id }}
+            );
+            reponse.status(200).json({ message : "Like supprimé !"});
         // Sinon, si le like n'existe pas, on le créé
         } else {
             LikePost.create({
                 user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id
-            })
-            .then(() => reponse.status(200).json({ message : "Like créé !"}))
-            .catch(erreur => reponse.status(500).json({ erreur }));
+            });
+            Publication.increment(
+                { likes: 1 },
+                { where: { id: requete.params.id }}
+            )
+            reponse.status(201).json({ message : "Like créé !"});
         }
     })
     .catch(erreur => reponse.status(500).json({ erreur }));
 };
 
-// Like d'un commentaire
-exports.likeCommentaire = (requete, reponse, next) => {
-    // On recherche un like selon le commentaire, la publication et l'utilisateur·rice
-    LikeComment.findOne({ where:
-        { user_like_comment_id: requete.auth.userId,
-        post_like_comment_id: requete.params.id,
-        comment_like_comment_id: requete.params.commentId }
+// Vérification du like d'une publication
+exports.checkLikePubli = (requete, reponse, next) => {
+    LikePost.findOne({ where:
+        { user_like_post_id: requete.auth.userId,
+        post_like_post_id: requete.params.id }
     })
-    .then((likecomment) => {
-        // Si un like existe déjà, on le supprime
-        if(likecomment) {
-            LikeComment.destroy({ where: 
-                { user_like_comment_id: requete.auth.userId,
-                post_like_comment_id: requete.params.id,
-                comment_like_comment_id: requete.params.commentId }
-            })
-            .then(() => reponse.status(200).json({ message : "Like supprimé !"}))
-            .catch(erreur => reponse.status(500).json({ erreur }));
-        // Sinon, si le like n'existe pas, on le créé
+    .then ((likepost) => {
+        // Si le like existe déjà, on renvoie l'information
+        if (likepost) {
+            return reponse.status(200).json({ message: "Like existant"});
         } else {
-            LikeComment.create({
-                user_like_comment_id: requete.auth.userId,
-                post_like_comment_id: requete.params.id,
-                comment_like_comment_id: requete.params.commentId
-            })
-            .then(() => reponse.status(200).json({ message : "Like créé !"}))
-            .catch(erreur => reponse.status(500).json({ erreur }));
+            return reponse.status(404).json({ message: "Like inexistant"});
         }
     })
     .catch(erreur => reponse.status(500).json({ erreur }));

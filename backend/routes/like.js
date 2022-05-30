@@ -12,7 +12,7 @@ const authentification = require ("../middleware/authentification");
 
 // Utilisation de l'application via l'implémenter du CRUD (creation, read, update, delete)
 router.post('/posts/:id', authentification, likeControle.likePublication);
-router.post('/posts/:id/comments/:commentId', authentification, likeControle.likeCommentaire);
+router.get('/posts/:id', authentification, likeControle.checkLikePubli);
 
 // Export du router
 module.exports = router;

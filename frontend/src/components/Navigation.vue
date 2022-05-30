@@ -1,9 +1,9 @@
 <template>
     <nav>
-        <router-link to="/accueil" title="Accueil">Accueil <i class="fa-solid fa-house"></i></router-link>  |
-        <router-link to="/publication" title="Poster une nouvelle publication">Nouvelle publication <i class="fa-solid fa-images"></i></router-link>  |
-        <router-link to="/profil" title="Mon profil">Mon profil <i class="fa-solid fa-user"></i></router-link>  |
-        <router-link to="/" title="Déconnexion" @click="deconnexion">Déconnexion <i class="fa-solid fa-arrow-right-from-bracket"></i></router-link>
+        <router-link to="/accueil" title="Accueil">Accueil&nbsp;<i class="fa-solid fa-house"></i></router-link>  |
+        <router-link to="/publication" title="Poster une nouvelle publication">Nouvelle&nbsp;publication&nbsp;<i class="fa-solid fa-images"></i></router-link>  |
+        <router-link to="/profil" title="Mon profil">Mon&nbsp;profil&nbsp;<i class="fa-solid fa-user"></i></router-link>  |
+        <router-link to="/" title="Déconnexion" @click="deconnexion">Déconnexion&nbsp;<i class="fa-solid fa-arrow-right-from-bracket"></i></router-link>
     </nav>
 </template>
 
@@ -19,11 +19,12 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 nav {
     padding-top: 20px;
     padding-bottom: 20px;
-    display: block;
+    display: flex;
+    justify-content: space-evenly;
     a {
         font-weight: bold;
         color: #2c3e50;
@@ -31,6 +32,13 @@ nav {
         &.router-link-exact-active {
             color: white;
         }
+    }
+}
+
+@media screen and (max-width: 550px) {
+    nav {
+        display: block;
+        justify-content: start;
     }
 }
 </style>

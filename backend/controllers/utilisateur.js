@@ -146,22 +146,21 @@ exports.suppressionCompte = (requete, reponse, next) => {
             User.findOne({ where: { id: requete.auth.userId }})
                 .then((user) => {
                     if(user.id !== requete.auth.userId && !user.administrateur) {
-                        return reponse.status(401).json({ message : "Vous n'avez pas les droits pour supprimer ce compte !" })
+                        reponse.status(401).json({ message : "Vous n'avez pas les droits pour supprimer ce compte !" })
                     }
                 })
                 .catch(erreur => reponse.status(500).json({ erreur }));
-            if (user.photo = "http://localhost:3000/images/default-profile.jpg") {
+            if (user.photo == "http://localhost:3000/images/default-profile.jpg") {
                 User.destroy({ where: { id: requete.params.id }})
                     .then(() => reponse.status(200).json({ message : "Compte supprimé !"}))
                     .catch(erreur => reponse.status(400).json({ erreur }));
             } else {
                 const nomFichier = user.photo.split("/images/")[1];
                 // On supprime l'image dans le dossier, puis on supprime le compte de la base de données
-                fileSystem.unlink(`images/${nomFichier}`, () => {
-                    User.destroy({ where: { id: requete.params.id }})
-                        .then(() => reponse.status(200).json({ message : "Compte supprimé !"}))
-                        .catch(erreur => reponse.status(400).json({ erreur }));
-                })
+                fileSystem.unlink(`images/${nomFichier}`, (erreur) => { erreur });
+                User.destroy({ where: { id: requete.params.id }})
+                    .then(() => reponse.status(200).json({ message : "Compte supprimé !"}))
+                    .catch(erreur => reponse.status(400).json({ erreur }));
             }
         })
         .catch(erreur => reponse.status(500).json({ erreur }));

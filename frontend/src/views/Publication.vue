@@ -32,7 +32,7 @@ export default {
             status: "",
             userId: "",
             texte: "",
-            photo: "",
+            photo: ""
         }
     },
     // Computed = permet de recalculer uniquement si les valeurs des champs changent

@@ -84,21 +84,21 @@
                 if (this.nom == "") {
                     return true;
                 }
-                let nomRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ-]{2,}$", "g");
+                let nomRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ -]{2,}$", "g");
                 return nomRegEx.test(this.nom);
             },
             validationPrenom: function () {
                 if (this.prenom == "") {
                     return true;
                 }
-                let prenomRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ-]{2,}$", "g");
+                let prenomRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ -]{2,}$", "g");
                 return prenomRegEx.test(this.prenom);
             },
             validationFonction: function () {
                 if (this.fonction == "") {
                     return true;
                 }
-                let fonctionRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ-]{2,}$", "g");
+                let fonctionRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ ·-]{2,}$", "g");
                 return fonctionRegEx.test(this.fonction);
             },
             validationEmail: function () {

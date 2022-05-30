@@ -17,6 +17,7 @@
         <p class="erreur" v-if="!validationNom">Votre nom doit comporter au moins deux lettres et ne pas avoir de caractères spéciaux ni de chiffres.</p>
         <p class="erreur" v-if="!validationPrenom">Votre prénom doit comporter au moins deux lettres et ne pas avoir de caractères spéciaux ni de chiffres.</p>
         <p class="erreur" v-if="!validationFonction">Votre fonction doit comporter au moins deux lettres et ne pas avoir de caractères spéciaux ni de chiffres.</p>
+        <p class="erreur" v-if="!validationBiographie">Votre biographie doit comporter au moins deux lettres.</p>
         <p class="erreur" v-if="!validationEmail">Votre adresse mail n'est pas valide.</p>
         <p class="erreur" v-if="mode == 'afficherProfil' && erreurStatus == 'erreur_affichage'">Problème d'affichage de vos informations.</p>
         <p class="erreur" v-if="mode == 'modifierProfil' && erreurStatus == 'erreur_modification'">Problème lors de la modification de vos informations.</p>
@@ -68,6 +69,7 @@
             !validationNom ||
             !validationPrenom ||
             !validationFonction ||
+            !validationBiographie ||
             !validationEmail }" @click="modifier()">
                 <span>Mettre à jour mon compte</span>
             </button>
@@ -100,13 +102,7 @@ export default {
     computed: {
             validationChamps: function () {
                 if (this.mode == "modifierProfil") {
-                    if (this.prenom != "" && this.nom != "" && this.fonction != "" && this.email != "") {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    if (this.email != "") {
+                    if (this.prenom != "" && this.nom != "" && this.fonction != "" && this.biographie != "" && this.email != "") {
                         return true;
                     } else {
                         return false;
@@ -131,8 +127,15 @@ export default {
                 if (this.fonction == "") {
                     return true;
                 }
-                let fonctionRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ -]{2,}$", "g");
+                let fonctionRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ ·-]{2,}$", "g");
                 return fonctionRegEx.test(this.fonction);
+            },
+            validationBiographie: function () {
+                if (this.biographie == "") {
+                    return true;
+                }
+                let biographieRegEx = new RegExp ("^[A-Za-zàâäéèêëïîôöùûüÿçæœÂÊÎÔÛÄËÏÖÜÀÆÇÉÈŒÙ ·?!.:;*_-]{2,}$", "g");
+                return biographieRegEx.test(this.biographie);
             },
             validationEmail: function () {
                 if (this.email == "") {
@@ -251,8 +254,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.encadre__titre, .encadre__soustitre {
-    margin-bottom: 12px;
+.encadre {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &__titre {
+        margin-bottom: 12px;
+    }
+    &__soustitre {
+        margin-bottom: 12px;
+    }
 }
 
 .affichage__section {
@@ -261,7 +272,7 @@ export default {
 }
 
 span {
-    font-weight: 800;
+    font-weight: 700;
 }
 
 h2, p, span {

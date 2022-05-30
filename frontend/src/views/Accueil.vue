@@ -27,11 +27,9 @@
             alt="Image de la publication" />
         </div>
         <div class="post__body__picto">
-          <i class="fa-solid fa-heart"></i> 0 like
+          <i class="fa-solid fa-heart" @click="likePublication(publication.id)"></i> {{ publication.likes }}
           <i class="fa-solid fa-comment"></i> 0 commentaire
         </div>
-        <AjoutCommentaire :publicationId="publication.id" />
-        <ListeCommentaires :publicationId="publication.id" />
       </div>
     </div>
     <p class="pas_publication" v-show="zeroPublication">Il n'y a pas de publication pour le moment.</p>
@@ -40,19 +38,18 @@
 
 <script>
 import Navigation from "../components/Navigation.vue";
-import AjoutCommentaire from "../components/AjoutCommentaire.vue";
-import ListeCommentaires from "../components/ListeCommentaires.vue";
 
 export default {
   name: "Accueil",
   components: {
-    Navigation, AjoutCommentaire, ListeCommentaires
+    Navigation
   },
   data: function () {
     return {
       titre: "Fil d'actualité",
       status: "",
       publications: [],
+      publicationLikee: "",
       utilisateurId: "",
       administrateur: null,
       zeroPublication: false
@@ -93,20 +90,21 @@ export default {
                 createdAt: donnees[i].createdAt.slice(0, 10).split('-').reverse().join('/'),
                 texte: donnees[i].texte,
                 image: donnees[i].photo,
-                photoUser: donnees[i].user.photo
+                photoUser: donnees[i].user.photo,
+                likes: donnees[i].likes
               });
             }
           });
         }
       })
       .catch((erreur) => console.log(erreur));
-    // Récupération de l'information sur l'administrateur
+    // Récupération de l'information sur l'administrateur·rice
     this.utilisateurId = donneesLocalStorage.userId;
     this.administrateur = donneesLocalStorage.administrateur;
   },
   // Methods = permet de calculer à chaque "apparition" de la page
   methods: {
-    supprimer: function(publicationId) {
+    supprimer: function (publicationId) {
       let donneesLocalStorage = JSON.parse(localStorage.getItem("donnees"));
       let suppInfos = {
         method: "DELETE",
@@ -114,6 +112,7 @@ export default {
           Authorization: "Bearer " + donneesLocalStorage.token
         }
       };
+      // Supprimer la publication
       fetch(`http://localhost:3000/api/posts/${publicationId}`, suppInfos)
         .then((reponse) => {
           if (reponse.status == 401 || reponse.status == 400 || reponse.status == 404) {
@@ -123,6 +122,28 @@ export default {
             this.status = "succes_suppression";
             window.location.reload();
           }
+        })
+        .catch((erreur) => console.log(erreur));
+    },
+    likePublication: function (publicationId) {
+      let donneesLocalStorage = JSON.parse(localStorage.getItem("donnees"));
+
+      const formData = new FormData();
+      formData.append("userId", donneesLocalStorage.userId);
+      formData.append("postId", this.id);
+
+      // Envoi des infos
+      let envoiInfos = {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: "Bearer " + donneesLocalStorage.token
+        }
+      };
+
+      fetch(`http://localhost:3000/api/likes/posts/${publicationId}`, envoiInfos)
+        .then(() => {
+          window.location.reload();
         })
         .catch((erreur) => console.log(erreur));
     }
@@ -146,7 +167,7 @@ export default {
 .post {
   &__entete {
     position: relative;
-    font-size: 0.8rem;
+    font-size: 15px;
     display: flex;
     align-items: center;
     margin-left: 2.5%;
@@ -175,7 +196,7 @@ export default {
     margin-top: 1rem;
     margin-bottom: 1rem;
     margin-left: 2.5%;
-    white-space: pre;
+    font-size: 15px;
   }
 
   &__image {
@@ -213,10 +234,6 @@ export default {
     cursor: pointer;
     color: red;
   }
-}
-
-.like {
-  color: red;
 }
 
 .fa-comment {
