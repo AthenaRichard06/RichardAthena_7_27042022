@@ -9,7 +9,8 @@ const postModel = db.define("post", {
     texte: { type: Sequelize.STRING, allowNull: false },
     photo: { type: Sequelize.STRING, allowNull: true },
     user_post_id: { type: Sequelize.INTEGER, allowNull: false },
-    likes: { type: Sequelize.INTEGER, allowNull: true }
+    likes: { type: Sequelize.INTEGER, allowNull: true },
+    commentaires: { type: Sequelize.INTEGER, allowNull: true }
 }, {
     timestamps: true,
     updatedAt: false,

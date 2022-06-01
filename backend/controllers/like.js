@@ -1,6 +1,6 @@
 // Import des modèles
 const LikePost = require ("../models/likePublication");
-const Publication = require ("../models/publication");
+const Post = require ("../models/publication");
 
 // Logiques métiers des différentes demandes CRUD
 // Like d'une publication
@@ -17,7 +17,7 @@ exports.likePublication = (requete, reponse, next) => {
                 { user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id }
             });
-            Publication.decrement(
+            Post.decrement(
                 { likes: 1 },
                 { where: { id: requete.params.id }}
             );
@@ -28,7 +28,7 @@ exports.likePublication = (requete, reponse, next) => {
                 user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id
             });
-            Publication.increment(
+            Post.increment(
                 { likes: 1 },
                 { where: { id: requete.params.id }}
             )
@@ -38,19 +38,12 @@ exports.likePublication = (requete, reponse, next) => {
     .catch(erreur => reponse.status(500).json({ erreur }));
 };
 
-// Vérification du like d'une publication
-exports.checkLikePubli = (requete, reponse, next) => {
-    LikePost.findOne({ where:
-        { user_like_post_id: requete.auth.userId,
-        post_like_post_id: requete.params.id }
+exports.compteLikes = (requete, reponse, next) => {
+    LikePost.count({ where:
+        { post_like_post_id: requete.params.id }
     })
-    .then ((likepost) => {
-        // Si le like existe déjà, on renvoie l'information
-        if (likepost) {
-            return reponse.status(200).json({ message: "Like existant"});
-        } else {
-            return reponse.status(404).json({ message: "Like inexistant"});
-        }
-    })
-    .catch(erreur => reponse.status(500).json({ erreur }));
-};
+        .then((compte) => {
+            reponse.status(200).json({ message : compte });
+        })
+        .catch(erreur => reponse.status(500).json({ erreur }));
+}

@@ -27,9 +27,11 @@
             alt="Image de la publication" />
         </div>
         <div class="post__body__picto">
-          <i class="fa-solid fa-heart" @click="likePublication(publication.id)"></i> {{ publication.likes }}
-          <i class="fa-solid fa-comment"></i> 0 commentaire
+          <i class="fa-solid fa-heart" @click="liker(publication.id)"></i> {{ likes }}
+          <i class="fa-solid fa-comment"></i> {{ publication.commentaires }}
         </div>
+        <AfficherCommentaires :publicationId="publication.id" :administrateur="this.administrateur" />
+        <AjoutCommentaire :publicationId="publication.id" />
       </div>
     </div>
     <p class="pas_publication" v-show="zeroPublication">Il n'y a pas de publication pour le moment.</p>
@@ -38,21 +40,23 @@
 
 <script>
 import Navigation from "../components/Navigation.vue";
+import AfficherCommentaires from "../components/AfficherCommentaires.vue";
+import AjoutCommentaire from "../components/AjoutCommentaire.vue";
 
 export default {
   name: "Accueil",
   components: {
-    Navigation
+    Navigation, AfficherCommentaires, AjoutCommentaire
   },
   data: function () {
     return {
       titre: "Fil d'actualité",
       status: "",
       publications: [],
-      publicationLikee: "",
+      likes: "",
       utilisateurId: "",
       administrateur: null,
-      zeroPublication: false
+      zeroPublication: false,
     }
   },
   // Mounted = ce qu'il se passe quand on va se rendre sur la page
@@ -71,7 +75,7 @@ export default {
         Authorization: "Bearer " + donneesLocalStorage.token
       }
     };
-    // Afficher les publications
+
     fetch("http://localhost:3000/api/posts/", recupInfos)
       .then((reponse) => {
         if (reponse.status == 401 || reponse.status == 500) {
@@ -91,13 +95,34 @@ export default {
                 texte: donnees[i].texte,
                 image: donnees[i].photo,
                 photoUser: donnees[i].user.photo,
-                likes: donnees[i].likes
+                // likes: donnees[i].likes,
+                commentaires: donnees[i].commentaires
               });
+
+              let id = donnees[i].id;
+              // Compter les likes d'une publication
+              fetch(`http://localhost:3000/api/likes/posts/${id}`, recupInfos)
+                .then((reponse) => {
+                  console.log(JSON.stringify(reponse.message));
+                  reponse.json();
+                  // if (reponse == 0) {
+                  //   this.likes = "0"
+                  // } else {
+                  //   console.log(reponse.compte);
+                  //   this.likes = reponse.message;
+                  // }
+                })
+                .then(function(data) {
+                  let compte = data;
+                  console.log(compte);
+                })
+                .catch((erreur) => console.log(erreur));
             }
           });
         }
       })
       .catch((erreur) => console.log(erreur));
+      
     // Récupération de l'information sur l'administrateur·rice
     this.utilisateurId = donneesLocalStorage.userId;
     this.administrateur = donneesLocalStorage.administrateur;
@@ -125,7 +150,7 @@ export default {
         })
         .catch((erreur) => console.log(erreur));
     },
-    likePublication: function (publicationId) {
+    liker: function (publicationId) {
       let donneesLocalStorage = JSON.parse(localStorage.getItem("donnees"));
 
       const formData = new FormData();
@@ -166,7 +191,6 @@ export default {
 
 .post {
   &__entete {
-    position: relative;
     font-size: 15px;
     display: flex;
     align-items: center;
@@ -174,7 +198,6 @@ export default {
     padding-top: 12px;
 
     &__changement {
-      position: absolute;
       right: 5px;
     }
   }

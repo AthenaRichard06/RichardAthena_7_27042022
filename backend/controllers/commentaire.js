@@ -1,6 +1,7 @@
 // Import des modèles
 const Comment = require ("../models/commentaire");
 const User = require ("../models/utilisateur");
+const Post = require ("../models/publication");
 
 // Import de file system de Node
 const fileSystem = require ("fs");
@@ -17,15 +18,33 @@ exports.creationCommentaire = (requete, reponse, next) => {
     Comment.create({
         texte: requete.body.texte,
         photo: lienPhoto,
-        user_comment_id: requete.body.userId,
+        user_comment_id: requete.auth.userId,
         post_comment_id: requete.body.postId
     })
         .then(() => reponse.status(201).json ({ message : "Commentaire enregistré !" }))
         .catch(erreur => reponse.status(400).json({ erreur }));
+    // On incrémente la partie commentaire des publications
+    Post.increment(
+        { commentaires: 1 },
+        { where: { id: requete.body.postId }}
+    );
+};
+
+// Afficher ue commentaire
+exports.affichageCommentaire = (requete, reponse, next) => {
+    Comment.findOne({
+        where: { id: requete.params.id },
+        include: {
+            model: User,
+            attributes: ["nom", "prenom"]
+        }
+    })
+        .then(post => reponse.status(200).json(post))
+        .catch(erreur => reponse.status(404).json({ erreur }));
 };
 
 // Afficher tous les commentaires d'une publication
-exports.affichageCommentaires = (requete, reponse, next) => {
+exports.affichageTousCommentaires = (requete, reponse, next) => {
     Comment.findAll({
         where: { post_comment_id: requete.params.id },
         include: {
@@ -59,7 +78,7 @@ exports.modificationCommentaire = (requete, reponse, next) => {
         // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le commentaire, sauf si c'est un·e administrateur·rice
         User.findOne({ where: { id: requete.auth.userId }})
         .then((user) => {
-            if(comment.user_comment_id !== requete.auth.userId || !user.administrateur) {
+            if(comment.user_comment_id !== requete.auth.userId && !user.administrateur) {
                 return reponse.status(401).json({ message : "Vous n'avez pas les droits pour modifier ce commentaire !" })
             }
         })
@@ -81,18 +100,23 @@ exports.suppressionCommentaire = (requete, reponse, next) => {
             // On vérifie que l'Id de l'utilisateur·rice est le même que l'Id de celui ou celle qui a crée le commentaire, sauf si c'est un·e administrateur·rice
             User.findOne({ where: { id: requete.auth.userId }})
                 .then((user) => {
-                    if(comment.user_comment_id !== requete.auth.userId || !user.administrateur) {
+                    if(comment.user_comment_id !== requete.auth.userId && !user.administrateur) {
                         return reponse.status(401).json({ message : "Vous n'avez pas les droits pour supprimer ce commentaire !" })
                     }
+                    const nomFichier = comment.photo.split("/images/")[1];
+                        // On supprime l'image dans le dossier, puis on supprime le commentaire de la base de données
+                        fileSystem.unlink(`images/${nomFichier}`, () => {
+                            Comment.destroy({ where: { id: requete.params.id }})
+                                .then(() => reponse.status(200).json({ message : "Commentaire supprimé !"}))
+                                .catch(erreur => reponse.status(400).json({ erreur }));
+                            // // On décrémente la partie commentaire des publications
+                            Post.decrement(
+                                { commentaires: 1 },
+                                { where: { id: requete.params.postId }}
+                            );
+                        })
                 })
                 .catch(erreur => reponse.status(500).json({ erreur }));
-            const nomFichier = comment.photo.split("/images/")[1];
-            // On supprime l'image dans le dossier, puis on supprime le commentaire de la base de données
-            fileSystem.unlink(`images/${nomFichier}`, () => {
-                Comment.destroy({ where: { id: requete.params.id }})
-                    .then(() => reponse.status(200).json({ message : "Commentaire supprimé !"}))
-                    .catch(erreur => reponse.status(400).json({ erreur }));
-            })
         })
         .catch(erreur => reponse.status(500).json({ erreur }));
 };

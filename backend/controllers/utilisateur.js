@@ -1,8 +1,9 @@
 // Import de bcrypt pour hacher les mots de passe
 const bcrypt = require ("bcrypt");
 
-// Import du modèle utilisateurModel
+// Import des modèles
 const User = require ("../models/utilisateur");
+const Post = require ("../models/publication");
 
 // Import de jsonwebtoken pour créer et vérifier les token
 const jsonwebtoken = require ("jsonwebtoken");

@@ -3,6 +3,7 @@ import Connexion from '../views/Connexion.vue'
 import Accueil from '../views/Accueil.vue'
 import Publication from '../views/Publication.vue'
 import ModifierPublication from '../views/ModifierPublication.vue'
+import ModifierCommentaire from '../views/ModifierCommentaire.vue'
 import MonProfil from '../views/MonProfil.vue'
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
     path: '/publication/:id',
     name: 'modifierpublication',
     component: ModifierPublication
+  },
+  {
+    path: '/commentaire/:id',
+    name: 'modifiercommentaire',
+    component: ModifierCommentaire
   },
   {
     path: '/profil',

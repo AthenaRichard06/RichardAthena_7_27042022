@@ -1,7 +1,6 @@
 // Import des modèles
 const Post = require("../models/publication");
 const User = require("../models/utilisateur");
-const LikePost = require("../models/likePublication");
 
 // Import de sequelize
 const { Op } = require("sequelize");

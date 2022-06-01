@@ -122,4 +122,15 @@ img {
         }
     }
 }
+
+@media screen and (max-width: 550px) {
+  body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .encadre {
+    padding: 10px;
+  }
+}
 </style>
