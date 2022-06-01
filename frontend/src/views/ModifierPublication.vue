@@ -4,6 +4,7 @@
         <h1 class="encadre__titre">{{ titre }}</h1>
         <!-- Validation des posts -->
         <p class="erreur" v-if="status == 'erreur_post'">Une erreur est survenue.</p>
+        <p class="erreur" v-if="status == 'erreur_vide'">Votre publication doit contenir du texte pour être valide.</p>
         <p class="succes" v-if="status == 'succes_modification'">Votre publication a bien été mise à jour.</p>
         <!-- Modification de la publication -->
         <form class="formulaire">
@@ -42,7 +43,7 @@ export default {
         validationChamps: function () {
             if (this.texte !== "") {
                 return true;
-            } else {
+            } else if (this.texte == "" || this.texte == null) {
                 return false;
             }
         }
@@ -105,7 +106,10 @@ export default {
                 }
             };
 
-            fetch(`http://localhost:3000/api/posts/${publicationId}`, envoiInfos)
+            if (this.texte == "") {
+                this.status = "erreur_vide";
+            } else {
+                fetch(`http://localhost:3000/api/posts/${publicationId}`, envoiInfos)
                 .then((reponse) => {
                     if (reponse.status == 401 || reponse.status == 500) {
                         this.status = "erreur_post";
@@ -116,6 +120,8 @@ export default {
                         })
                     }
                 })
+                .catch((erreur) => console.log(erreur));
+            }
         }
     }
 }

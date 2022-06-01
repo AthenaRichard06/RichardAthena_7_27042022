@@ -4,6 +4,7 @@
         <h1 class="encadre__titre">{{ titre }}</h1>
         <!-- Validation des commentaires -->
         <p class="erreur" v-if="status == 'erreur_post'">Une erreur est survenue.</p>
+        <p class="erreur" v-if="status == 'erreur_vide'">Votre commentaire doit contenir du texte pour être valide.</p>
         <p class="succes" v-if="status == 'succes_modification'">Votre commentaire a bien été mis à jour.</p>
         <!-- Modification dy commentaire -->
         <form class="formulaire">
@@ -58,16 +59,16 @@ export default {
                 Authorization: "Bearer " + donneesLocalStorage.token
             }
         };
-        
+
         fetch(`http://localhost:3000/api/comments/${commentaireId}`, recupInfos)
             .then((reponse) => {
                 if (reponse.status == 401 || reponse.status == 500) {
                     this.status = "erreur_post";
                 } else {
-                    reponse.json().then((donnees) => {   
+                    reponse.json().then((donnees) => {
                         this.texte = donnees.texte
                     })
-                    .catch((erreur) => console.log(erreur));
+                        .catch((erreur) => console.log(erreur));
                 }
             })
             .catch((erreur) => console.log(erreur));
@@ -80,7 +81,7 @@ export default {
             const formData = new FormData();
             formData.append("texte", this.texte);
 
-            let commentaireId = this.$route.params.id; 
+            let commentaireId = this.$route.params.id;
 
             // Envoi des infos
             let envoiInfos = {
@@ -91,24 +92,30 @@ export default {
                 }
             };
 
-            fetch(`http://localhost:3000/api/comments/${commentaireId}`, envoiInfos)
-                .then((reponse) => {
-                    if (reponse.status == 401 || reponse.status == 500) {
-                        this.status = "erreur_post";
-                    } else {
-                        reponse.json().then(() => {
-                            this.status = "succes_modification",
-                            this.$router.push("/accueil")
-                        })
-                    }
-                })
+            if (this.texte == "") {
+                this.status = "erreur_vide";
+            } else {
+                fetch(`http://localhost:3000/api/comments/${commentaireId}`, envoiInfos)
+                    .then((reponse) => {
+                        if (reponse.status == 401 || reponse.status == 500) {
+                            this.status = "erreur_post";
+                        } else {
+                            reponse.json().then(() => {
+                                this.status = "succes_modification",
+                                    this.$router.push("/accueil")
+                            })
+                        }
+                    })
+                    .catch((erreur) => console.log(erreur));
+            }
         }
     }
 }
 </script>
 
 <style scoped lang="scss">
-.encadre__titre, input {
+.encadre__titre,
+input {
     margin-bottom: 12px;
 }
 </style>
