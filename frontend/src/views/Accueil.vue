@@ -9,8 +9,7 @@
       <div class="post__entete">
         <img class="cercle" alt="Photo de profil" :src="publication.photoUser" />
         <div class="post__entete__infos">
-          <b>{{ publication.prenom }} {{ publication.nom }}</b>,<br />
-          le {{ publication.createdAt }}
+          <b>{{ publication.prenom }} {{ publication.nom }}</b>,<br />le {{ publication.createdAt }}
         </div>
         <div class="post__entete__changement"
           v-if="publication.userId === utilisateurId || this.administrateur == true">
@@ -27,8 +26,8 @@
             alt="Image de la publication" />
         </div>
         <div class="post__body__picto">
-          <i class="fa-solid fa-heart" @click="liker(publication.id)"></i> {{ likes }}
-          <i class="fa-solid fa-comment"></i> {{ publication.commentaires }}
+          <i class="fa-solid fa-heart" @click="liker(publication.id)"></i> {{ likeposts[publication.id] }} {{ publicationId }}
+          <i class="fa-solid fa-comment"></i> {{ commentaireposts[publication.id] }}
         </div>
         <AfficherCommentaires :publicationId="publication.id" :administrateur="this.administrateur" />
         <AjoutCommentaire :publicationId="publication.id" />
@@ -53,7 +52,9 @@ export default {
       titre: "Fil d'actualité",
       status: "",
       publications: [],
-      likes: "",
+      likeposts: [],
+      commentaireposts: [],
+      publicationId: "",
       utilisateurId: "",
       administrateur: null,
       zeroPublication: false,
@@ -94,35 +95,34 @@ export default {
                 createdAt: donnees[i].createdAt.slice(0, 10).split('-').reverse().join('/'),
                 texte: donnees[i].texte,
                 image: donnees[i].photo,
-                photoUser: donnees[i].user.photo,
-                // likes: donnees[i].likes,
-                commentaires: donnees[i].commentaires
+                photoUser: donnees[i].user.photo
               });
 
               let id = donnees[i].id;
+
               // Compter les likes d'une publication
               fetch(`http://localhost:3000/api/likes/posts/${id}`, recupInfos)
                 .then((reponse) => {
-                  console.log(JSON.stringify(reponse.message));
-                  reponse.json();
-                  // if (reponse == 0) {
-                  //   this.likes = "0"
-                  // } else {
-                  //   console.log(reponse.compte);
-                  //   this.likes = reponse.message;
-                  // }
+                  reponse.json().then((likes) => {
+                    this.likeposts[id] = likes.length;
+                  })
                 })
-                .then(function(data) {
-                  let compte = data;
-                  console.log(compte);
+                .catch((erreur) => console.log(erreur));
+
+              // Compter les commentaires d'une publication
+              fetch(`http://localhost:3000/api/comments/posts/${id}`, recupInfos)
+                .then((reponse) => {
+                  reponse.json().then((comm) => {
+                    this.commentaireposts[id] = comm.length;
+                  })
                 })
                 .catch((erreur) => console.log(erreur));
             }
-          });
+          })
         }
       })
       .catch((erreur) => console.log(erreur));
-      
+
     // Récupération de l'information sur l'administrateur·rice
     this.utilisateurId = donneesLocalStorage.userId;
     this.administrateur = donneesLocalStorage.administrateur;

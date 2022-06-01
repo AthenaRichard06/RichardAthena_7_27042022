@@ -33,7 +33,9 @@ export default {
     data: function () {
         return {
             commentaires: [],
-            status: ""
+            status: "",
+            prenom: "",
+            nom: ""
         };
     },
     // Mounted = ce qu'il se passe quand on va se rendre sur la page
@@ -81,10 +83,6 @@ export default {
             this.utilisateurId = donneesLocalStorage.userId;
             this.administrateur = donneesLocalStorage.administrateur;
             let publicationId = this.publicationId;
-            console.log("l'utilisateur est administrateur ? " + this.administrateur);
-            console.log("l'id de l'utilisateur est " + this.utilisateurId);
-            console.log("l'id de la publication est " + publicationId);
-            console.log("l'id du commentaire est " + commentaireId);
 
             let suppInfos = {
                 method: "DELETE",

@@ -23,11 +23,6 @@ exports.creationCommentaire = (requete, reponse, next) => {
     })
         .then(() => reponse.status(201).json ({ message : "Commentaire enregistré !" }))
         .catch(erreur => reponse.status(400).json({ erreur }));
-    // On incrémente la partie commentaire des publications
-    Post.increment(
-        { commentaires: 1 },
-        { where: { id: requete.body.postId }}
-    );
 };
 
 // Afficher ue commentaire
@@ -49,7 +44,7 @@ exports.affichageTousCommentaires = (requete, reponse, next) => {
         where: { post_comment_id: requete.params.id },
         include: {
             model: User,
-            attributes: ["nom", "prenom", "photo"]
+            attributes: ["nom", "prenom"]
         },
         order: [["createdAt", "ASC"]]
     })
@@ -109,11 +104,6 @@ exports.suppressionCommentaire = (requete, reponse, next) => {
                             Comment.destroy({ where: { id: requete.params.id }})
                                 .then(() => reponse.status(200).json({ message : "Commentaire supprimé !"}))
                                 .catch(erreur => reponse.status(400).json({ erreur }));
-                            // // On décrémente la partie commentaire des publications
-                            Post.decrement(
-                                { commentaires: 1 },
-                                { where: { id: requete.params.postId }}
-                            );
                         })
                 })
                 .catch(erreur => reponse.status(500).json({ erreur }));

@@ -16,6 +16,37 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comments` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `texte` varchar(255) NOT NULL,
+  `photo` varchar(100) DEFAULT NULL,
+  `user_comment_id` int NOT NULL,
+  `post_comment_id` int NOT NULL,
+  `createdAt` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_comment_id`),
+  KEY `post_id_idx` (`post_comment_id`),
+  CONSTRAINT `post_comment_id` FOREIGN KEY (`post_comment_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_comment_id` FOREIGN KEY (`user_comment_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comments`
+--
+
+LOCK TABLES `comments` WRITE;
+/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `likeposts`
 --
 
@@ -31,7 +62,7 @@ CREATE TABLE `likeposts` (
   KEY `post_like_id_idx` (`post_like_post_id`),
   CONSTRAINT `post_like_post_id` FOREIGN KEY (`post_like_post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_like_post_id` FOREIGN KEY (`user_like_post_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,13 +85,12 @@ CREATE TABLE `posts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `texte` varchar(255) NOT NULL,
   `photo` varchar(100) DEFAULT NULL,
-  `likes` int DEFAULT '0',
   `user_post_id` int NOT NULL,
   `createdAt` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id_idx` (`user_post_id`),
   CONSTRAINT `user_post_id` FOREIGN KEY (`user_post_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +121,7 @@ CREATE TABLE `users` (
   `administrateur` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +130,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (17,'RH','Service','administrateur@groupomania.fr','$2b$10$wtCNJezXb9DUVaeaUf2mDuTykwya4zXq2mPqriwjHK0qFKy3xN.8a','Administrateur·rice','http://localhost:3000/images/default-profile.jpg','Service des ressources humaines',1);
+INSERT INTO `users` VALUES (17,'RH','Service','administrateur@groupomania.fr','$2b$10$wtCNJezXb9DUVaeaUf2mDuTykwya4zXq2mPqriwjHK0qFKy3xN.8a','Administrateur·rice','http://localhost:3000/images/icon.png1653568278506.png','Service des ressources humaines',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -113,4 +143,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-30 23:36:20
+-- Dump completed on 2022-06-01 14:41:25

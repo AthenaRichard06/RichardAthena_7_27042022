@@ -8,9 +8,7 @@ const db = require("../config/sequelize");
 const postModel = db.define("post", {
     texte: { type: Sequelize.STRING, allowNull: false },
     photo: { type: Sequelize.STRING, allowNull: true },
-    user_post_id: { type: Sequelize.INTEGER, allowNull: false },
-    likes: { type: Sequelize.INTEGER, allowNull: true },
-    commentaires: { type: Sequelize.INTEGER, allowNull: true }
+    user_post_id: { type: Sequelize.INTEGER, allowNull: false }
 }, {
     timestamps: true,
     updatedAt: false,

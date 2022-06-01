@@ -59,6 +59,10 @@ Affichage des publications de tou·tes les utilisateur·rices
 Création de nouvelles publications
 Modification de publications
 Suppression de publications
+Affichage des commentaires d'une publication
+Modification de commentaires
+Suppression  de commentaires
+Ajout de like sur les publications
 Affichage d'un profil personnel
 Modification d'un profil personnel
 ```
@@ -69,4 +73,4 @@ Un compte administrateur·rice a été créé. Vous pouvez modifier les données
 email: "administrateur@groupomania.fr"
 mot de passe: "Admin_1234"
 ```
-Modérer les contenus (modifier et supprimer les publications des utilisateur·rices).
+Modérer les contenus (modifier et supprimer les publications et commentaires des utilisateur·rices).

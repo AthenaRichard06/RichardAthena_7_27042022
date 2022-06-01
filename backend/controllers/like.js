@@ -17,10 +17,6 @@ exports.likePublication = (requete, reponse, next) => {
                 { user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id }
             });
-            Post.decrement(
-                { likes: 1 },
-                { where: { id: requete.params.id }}
-            );
             reponse.status(200).json({ message : "Like supprimé !"});
         // Sinon, si le like n'existe pas, on le créé
         } else {
@@ -28,22 +24,17 @@ exports.likePublication = (requete, reponse, next) => {
                 user_like_post_id: requete.auth.userId,
                 post_like_post_id: requete.params.id
             });
-            Post.increment(
-                { likes: 1 },
-                { where: { id: requete.params.id }}
-            )
             reponse.status(201).json({ message : "Like créé !"});
         }
     })
     .catch(erreur => reponse.status(500).json({ erreur }));
 };
 
-exports.compteLikes = (requete, reponse, next) => {
-    LikePost.count({ where:
-        { post_like_post_id: requete.params.id }
+// Afficher tous les commentaires d'une publication
+exports.affichageTousLikes = (requete, reponse, next) => {
+    LikePost.findAll({
+        where: { post_like_post_id: requete.params.id }
     })
-        .then((compte) => {
-            reponse.status(200).json({ message : compte });
-        })
-        .catch(erreur => reponse.status(500).json({ erreur }));
-}
+        .then(post => reponse.status(200).json(post))
+        .catch(erreur => reponse.status(404).json({ erreur }));  
+};
