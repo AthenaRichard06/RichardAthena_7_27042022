@@ -19,9 +19,11 @@
         <p class="erreur" v-if="!validationFonction">Votre fonction doit comporter au moins deux lettres et ne pas avoir de caractères spéciaux ni de chiffres.</p>
         <p class="erreur" v-if="!validationBiographie">Votre biographie doit comporter au moins deux lettres.</p>
         <p class="erreur" v-if="!validationEmail">Votre adresse mail n'est pas valide.</p>
+        <p class="erreur" v-if="status == 'erreur_vide'">Tous les champs doivent être complétés.</p>
         <p class="erreur" v-if="mode == 'afficherProfil' && erreurStatus == 'erreur_affichage'">Problème d'affichage de vos informations.</p>
         <p class="erreur" v-if="mode == 'modifierProfil' && erreurStatus == 'erreur_modification'">Problème lors de la modification de vos informations.</p>
         <p class="succes" v-if="mode == 'modifierProfil' && erreurStatus == 'succes_modification'">Votre profil a bien été mis à jour.</p>
+        
         <!-- Formulaire -->
         <img class="carre" alt="Photo de profil" :src="photo" />
         <div id="modification" v-if="mode == 'modifierProfil'">
@@ -95,7 +97,8 @@ export default {
             photo: "",
             photo_telechargee: "",
             email: "",
-            erreurStatus: null
+            erreurStatus: null,
+            status: ""
         }
     },
     // Computed = permet de recalculer uniquement si les valeurs des champs changent
@@ -213,8 +216,11 @@ export default {
                 };
 
                 let userId = donneesLocalStorage.userId;
-
-                fetch(`http://localhost:3000/api/profiles/${userId}`, envoiInfos)
+                
+                if (this.prenom == "" || this.nom == "" || this.email == "" || this.fonction == "" || this.biographie == "") {
+                    this.status = "erreur_vide";
+                } else {
+                    fetch(`http://localhost:3000/api/profiles/${userId}`, envoiInfos)
                     .then((reponse) => {
                         if (reponse.status == 401) {
                             this.erreurStatus = "erreur_modification";
@@ -226,6 +232,7 @@ export default {
                         }
                     })
                     .catch((erreur) => console.log(erreur));
+                }
             },
             supprimer: function () {
                 let donneesLocalStorage = JSON.parse(localStorage.getItem("donnees"));
